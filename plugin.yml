@@ -1,0 +1,5 @@
+name: DecimateHub
+version: 1.0
+author: _Ug
+description: DecimatePVP hub plugin
+main: com.decimatepvp.hub.core.DecimateHub
