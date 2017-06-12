@@ -2,6 +2,7 @@ package com.decimatepvp.hub.core;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +26,8 @@ public class DecimateHub extends JavaPlugin implements Listener {
 	private ServerManager serverManager;
 	private UserManager userManager;
 	private UserInventory userInventory;
+	
+	private int views = 0;
 	
 	private Location spawn;
 	
@@ -50,13 +53,122 @@ public class DecimateHub extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onPing(ServerListPingEvent event){
-		event.setMotd(ChatColor.LIGHT_PURPLE + "DecimatePVP:\n" + ChatColor.GRAY + "Map 2 release: " + ChatColor.YELLOW + nextMapRelease());
+		String color = randomColor();
+		views++;
+//		if(event.getAddress().getHostAddress().equals("73.231.191.61")){
+//			event.setMotd(ChatColor.YELLOW + "pViews: " + views + " " + ChatColor.YELLOW + "rTPS: ");
+//		}else{
+			event.setMotd(randomSpacing(color, 21) + ChatColor.translateAlternateColorCodes('&', " &c&lD&6&lE&e&lC&a&lI&b&lM&9&lA&5&lT&c&lE&f&lPVP&r&7: ") + randomSpacing(color, 17) + "\n" + ChatColor.GRAY + "Season II open: " + ChatColor.YELLOW + nextMapRelease());
+//		}
+	}
+	
+	private String randomSpacing(String color, int length){
+		String str = "";
+		boolean last = false;
+		for(int i = 0; i < length; i++){
+			if(Math.random() <= .2 && !last){
+				ChatColor col = randomBlue();
+				if(color.equals("green")){
+					col = randomGreen();
+				}else if(color.equals("red")){
+					col = randomRed();
+				}else if(color.equals("purple")){
+					col = randomPurple();
+				}else if(color.equals("gray")){
+					col = randomGray();
+				}
+				str += col + "*";
+				last = true;
+			}else{
+				str += " ";
+				last = false;
+			}
+		}
+		return str;
+	}
+	
+	private String randomColor(){
+		double d = Math.random();
+		if(d < .2){
+			return "blue";
+		}else if(d < .4){
+			return "green";
+		}else if(d < .6){
+			return "red";
+		}else if(d < .8){
+			return "purple";
+		}else{
+			return "gray";
+		}
+	}
+	
+	private ChatColor randomBlue(){
+		double d = Math.random();
+		if(d < .25){
+			return ChatColor.BLUE;
+		}else if(d < .5){
+			return ChatColor.AQUA;
+		}else if(d < .75){
+			return ChatColor.DARK_BLUE;
+		}else{
+			return ChatColor.DARK_AQUA;
+		}
+	}
+	
+	private ChatColor randomGray(){
+		double d = Math.random();
+		if(d < .25){
+			return ChatColor.WHITE;
+		}else if(d < .50){
+			return ChatColor.BLACK;
+		}else if(d < .75){
+			return ChatColor.DARK_GRAY;
+		}else{
+			return ChatColor.GRAY;
+		}
+	}
+	
+	private ChatColor randomRed(){
+		double d = Math.random();
+		if(d < .25){
+			return ChatColor.RED;
+		}else if(d < .50){
+			return ChatColor.YELLOW;
+		}else if(d < .75){
+			return ChatColor.GOLD;
+		}else{
+			return ChatColor.DARK_RED;
+		}
+	}
+	
+	private ChatColor randomGreen(){
+		double d = Math.random();
+		if(d < .333){
+			return ChatColor.DARK_GREEN;
+		}else if(d < .666){
+			return ChatColor.YELLOW;
+		}else{
+			return ChatColor.GREEN;
+		}
+	}
+	
+	private ChatColor randomPurple(){
+		double d = Math.random();
+		if(d < .5){
+			return ChatColor.LIGHT_PURPLE;
+		}else{
+			return ChatColor.DARK_PURPLE;
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
 	public String nextMapRelease(){
 		Date now = new Date();
-		Date then = new Date(2017-1900, 7-1, 25, 12, 0);
+		//PST
+		Date then = new Date(2017-1900, 6-1, 16, 15-2, 0);
+		if(now.after(then)){
+			return "open!";
+		}
 		long time = then.getTime() - now.getTime();
 		
 		int seconds = (int) ((time / 1000) % 60);

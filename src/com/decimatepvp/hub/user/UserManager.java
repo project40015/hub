@@ -72,7 +72,6 @@ public class UserManager implements Listener {
 		}
 		Vector v = event.getPlayer().getLocation().getDirection();
 		v = v.setY(Math.abs(v.getY()));
-		v = v.multiply(2);
 		event.getPlayer().setVelocity(v);
 		event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_PICKUP, 1, 1);
 		if(event.getPlayer().isFlying()){

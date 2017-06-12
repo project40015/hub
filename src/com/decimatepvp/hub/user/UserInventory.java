@@ -27,7 +27,7 @@ public class UserInventory {
 	public void apply(Player player){
 		player.getInventory().clear();
 		player.getInventory().setItem(0, serverSelector);
-		player.getInventory().setItem(1, cosmeticSelector);
+//		player.getInventory().setItem(1, cosmeticSelector);
 	}
 	
 	public ItemStack getServerSelector(){
