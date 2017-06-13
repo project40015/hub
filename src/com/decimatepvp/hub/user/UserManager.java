@@ -1,7 +1,9 @@
 package com.decimatepvp.hub.user;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,11 +12,13 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.util.Vector;
@@ -41,6 +45,30 @@ public class UserManager implements Listener {
 		hub.getUserInventory().apply(event.getPlayer());
 		event.getPlayer().sendMessage(ChatColor.GRAY + "Welcome to " + ChatColor.LIGHT_PURPLE + "DecimatePVP" + ChatColor.GRAY + "!");
 		event.getPlayer().setAllowFlight(true);
+		event.getPlayer().setPlayerListName(ChatColor.GRAY + event.getPlayer().getName());
+		hideAll(event.getPlayer());
+	}
+	
+	private void hideAll(Player p){
+		for(Player player : Bukkit.getServer().getOnlinePlayers()){
+			if(p.canSee(player)){
+				p.hidePlayer(player);
+			}
+			if(player.canSee(p)){
+				player.hidePlayer(p);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent event){
+		if(!event.getPlayer().isOp()){
+			event.getPlayer().sendMessage(ChatColor.RED + "Chat in the hub is disabled.");
+			event.setCancelled(true);
+		}else{
+			Bukkit.broadcastMessage(ChatColor.RED + event.getPlayer().getName() + ChatColor.GRAY + ": " + event.getMessage());
+			event.setCancelled(true);
+		}
 	}
 	
 	@EventHandler
@@ -71,8 +99,8 @@ public class UserManager implements Listener {
 			return;
 		}
 		Vector v = event.getPlayer().getLocation().getDirection();
-		v = v.setY(Math.abs(v.getY()));
-		event.getPlayer().setVelocity(v);
+		v = v.setY(Math.abs(v.getY())*1.4);
+		event.getPlayer().setVelocity(v.multiply(1.3));
 		event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_PICKUP, 1, 1);
 		if(event.getPlayer().isFlying()){
 			event.getPlayer().setFlying(false);
@@ -102,6 +130,15 @@ public class UserManager implements Listener {
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event){
 		event.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void onEscape(PlayerMoveEvent event){
+		Location clone = event.getTo().clone();
+		clone.setY(DecimateHub.getInstance().getSpawn().getY());
+		if(clone.distance(DecimateHub.getInstance().getSpawn()) > 150){
+			event.getPlayer().teleport(DecimateHub.getInstance().getSpawn());
+		}
 	}
 	
 	@EventHandler

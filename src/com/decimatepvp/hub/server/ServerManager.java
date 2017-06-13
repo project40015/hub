@@ -22,7 +22,7 @@ public class ServerManager implements Listener {
 	public ServerManager(List<Server> servers){
 		this.servers = servers;
 		inventory = Bukkit.getServer().createInventory(null, 9, ChatColor.UNDERLINE + "Server Selector");
-		loadServerList();
+		generateServerList();
 	}
 	
 	@EventHandler
@@ -33,9 +33,10 @@ public class ServerManager implements Listener {
 				if(isServer(event.getCurrentItem())){
 					Server server = getServer(event.getCurrentItem());
 					if(server.getUp()){
-						player.sendMessage(ChatColor.GRAY + "Sending you to " + server.getName() + ChatColor.GRAY + "!");
+						player.sendMessage(ChatColor.YELLOW + "Sending you to " + ChatColor.stripColor(server.getName()) + "...");
+						server.sendTo(player);
 					}else{
-						player.sendMessage(ChatColor.RED + "Server " + server.getName() + ChatColor.GRAY + " is coming soon.");
+						player.sendMessage(ChatColor.RED + "Server " + ChatColor.stripColor(server.getName()) + " is coming soon.");
 					}
 					player.closeInventory();
 				}
@@ -48,13 +49,20 @@ public class ServerManager implements Listener {
 		return getServer(icon) != null;
 	}
 	
-	private void loadServerList(){
-		inventory.setItem(4, servers.get(0).getIcon());
+	private void generateServerList(){
+		updateServerList();
 		
 		ItemStack blank = ItemFactory.createItem(Material.WOOD_BUTTON, " ", null);
 		while(inventory.firstEmpty() != -1){
 			inventory.setItem(inventory.firstEmpty(), blank);
 		}
+	}
+	
+	public void updateServerList(){
+		for(Server server : servers){
+			server.updateOnlineItemStack();
+		}
+		inventory.setItem(4, servers.get(0).getIcon());
 	}
 	
 	public Inventory getServerList(){
@@ -68,6 +76,15 @@ public class ServerManager implements Listener {
 		for(Server server : servers){
 			if(server.getIcon().getType().equals(icon.getType()) &&
 					server.getIcon().getItemMeta().getDisplayName().equals(icon.getItemMeta().getDisplayName())){
+				return server;
+			}
+		}
+		return null;
+	}
+	
+	public Server getServer(String id){
+		for(Server server : servers){
+			if(server.getId().equals(id)){
 				return server;
 			}
 		}
