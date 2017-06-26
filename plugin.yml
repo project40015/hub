@@ -3,3 +3,8 @@ version: 1.0
 author: _Ug
 description: DecimatePVP hub plugin
 main: com.decimatepvp.hub.core.DecimateHub
+commands:
+  test:
+    description: Join test server
+  factions:
+    description: Join factions server

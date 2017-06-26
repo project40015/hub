@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import com.decimatepvp.hub.commands.JoinFactionsCommand;
+import com.decimatepvp.hub.commands.JoinTestServerCommand;
 import com.decimatepvp.hub.server.Server;
 import com.decimatepvp.hub.server.ServerManager;
 import com.decimatepvp.hub.user.UserInventory;
@@ -53,6 +55,9 @@ public class DecimateHub extends JavaPlugin implements Listener, PluginMessageLi
 		registerListeners(serverManager, userManager, this);
 		
 		startServerCount();
+		
+		this.getCommand("factions").setExecutor(new JoinFactionsCommand());
+		this.getCommand("test").setExecutor(new JoinTestServerCommand());
 		
 //		then = (new Date(2017-1900, 6-1, 16, 18-2, 0)).getTime();
 	}
